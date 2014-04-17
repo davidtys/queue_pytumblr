@@ -19,10 +19,14 @@ class QueuePosts:
 
     # @todo status
     def reblog_posts(self):
-        posts_urls = self._ongoing_posts_urls_toreblog()
-        for post_url in posts_urls:
+        for count in xrange(settings.MAX_TOREBLOG):
+            if self._posts.count_posts_toreblog() == 0:
+                break
+            post_url = self._posts.getdel_post_url_to_reblog()
+            self._posts.add_post_url_ongoing(post_url)
             self.queue_worker_post(post_url)
-        return posts_urls
+            print post_url,
+        return count
 
     def _ongoing_posts_urls_toreblog(self):
         posts_urls = self._posts.posts_urls_toreblog()

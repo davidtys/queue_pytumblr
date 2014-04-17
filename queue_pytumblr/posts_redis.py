@@ -63,17 +63,12 @@ class PostsRedis:
             return True
         return False
 
+    def getdel_post_url_to_reblog(self):
+        return self._redis.spop(settings.POSTS_TOREBLOG)
+
     # --- ongoing ---
 
-    def move_list_posts_urls_ongoing(self, posts_urls):
-        move_urls = copy.copy(posts_urls)
-        for move_url in move_urls:
-            self.move_post_url_ongoing(move_url)
-        return move_urls
-
-    def move_post_url_ongoing(self, post_url):
-        if self.remove_post_url_toreblog(post_url) == 0:
-            raise Exception("post '"+ post_url + "' doesn't exist in toreblog (" + str(self.count_posts_toreblog()) + " posts)")
+    def add_post_url_ongoing(self, post_url):
         return self._redis.sadd(settings.POSTS_ONGOING, post_url)
 
     def remove_post_url_ongoing(self, post_url):
@@ -91,12 +86,6 @@ class PostsRedis:
         return False
 
     # --- reblogged ---
-
-    def move_list_posts_urls_reblogged(self, posts_urls):
-        move_urls = copy.copy(posts_urls)
-        for move_url in move_urls:
-            self.move_post_url_reblogged(move_url)
-        return move_urls
 
     def move_post_url_reblogged(self, post_url):
         if self.remove_post_url_ongoing(post_url) == 0:
