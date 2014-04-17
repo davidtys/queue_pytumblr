@@ -1,0 +1,46 @@
+import unittest
+
+from queue_pytumblr import QueuePosts
+from tests import helpers_tests
+
+
+class TestQueueWorkers(unittest.TestCase):
+
+    def setUp(self):
+        self.queueWorkers = QueueWorkers()
+        self._init_queue()
+
+    def _init_queue(self):
+        self.queueWorkers._posts = create_postsredis()
+        for post_url in list_posts_urls():
+            self.queueWorkers._posts.add_post_url_to_reblog(post_url)
+
+    def test_queue_posts_urls_to_reblog(self):
+        count_posts_urls = len(self.queueWorkers._posts.posts_urls_to_reblog())
+        self.assertEqual(len(self.queueWorkers._posts.posts_urls_ongoing()), 0)
+
+        self.assertEqual(len(self.queueWorkers._queue_posts_urls_to_reblog()), count_posts_urls)
+        self.assertEqual(len(self.queueWorkers._posts.posts_urls_to_reblog()), 0)
+        self.assertEqual(len(self.queueWorkers._posts.posts_urls_ongoing()), count_posts_urls)
+
+    def test_post_url_reblogged(self):
+        post_url = get_post_url()
+        self.queueWorkers._posts.move_post_url_ongoing(post_url)
+        self.assertEqual(len(self.queueWorkers._posts.posts_urls_ongoing()), 1)        
+        self.assertEqual(len(self.queueWorkers._posts.posts_urls_reblogged()), 0)
+
+        self.queueWorkers._post_url_reblogged(post_url)
+        self.assertEqual(len(self.queueWorkers._posts.posts_urls_ongoing()), 0)
+        self.assertEqual(len(self.queueWorkers._posts.posts_urls_reblogged()), 1)
+
+    def test_reblog_posts(self):
+        count_posts_urls = len(self.queueWorkers._posts.posts_urls_to_reblog())
+        self.assertEqual(len(self.queueWorkers._posts.posts_urls_reblogged()), 0)
+
+        self.queueWorkers.reblog_posts()
+        self.assertEqual(len(self.queueWorkers._posts.posts_urls_to_reblog()), 0)
+        self.assertEqual(len(self.queueWorkers._posts.posts_urls_reblogged()), count_posts_urls)
+
+
+if __name__ == '__main__':
+    unittest.main()        
