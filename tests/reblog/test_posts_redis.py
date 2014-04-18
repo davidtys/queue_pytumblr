@@ -15,11 +15,11 @@ class TestPostsRedis(unittest.TestCase):
 
     def test_add_post_url_toreblog(self):
         post_url = get_post_url()
-        self.assertEqual(self.posts._redis.scard(settings.POSTS_TOREBLOG), 0)
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_toreblog_name()), 0)
 
         self.posts.add_post_url_toreblog(post_url)
-        self.assertEqual(self.posts._redis.scard(settings.POSTS_TOREBLOG), 1)
-        self.assertEqual(self.posts._redis.spop(settings.POSTS_TOREBLOG), post_url)
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_toreblog_name()), 1)
+        self.assertEqual(self.posts._redis.spop(self.posts.posts_toreblog_name()), post_url)
 
     def test_getdel_post_url_to_reblog(self):
          post_url = get_post_url()
@@ -28,28 +28,28 @@ class TestPostsRedis(unittest.TestCase):
      
     def test_add_post_url_ongoing(self):
         post_url = get_post_url()
-        self.assertEqual(self.posts._redis.scard(settings.POSTS_ONGOING), 0)
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_ongoing_name()), 0)
 
         self.posts.add_post_url_ongoing(post_url)
-        self.assertEqual(self.posts._redis.scard(settings.POSTS_TOREBLOG), 0)
-        self.assertEqual(self.posts._redis.scard(settings.POSTS_ONGOING), 1)
-        self.assertEqual(self.posts._redis.spop(settings.POSTS_ONGOING), post_url)
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_toreblog_name()), 0)
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_ongoing_name()), 1)
+        self.assertEqual(self.posts._redis.spop(self.posts.posts_ongoing_name()), post_url)
 
     def test_move_post_url_reblogged(self):
         post_url = get_post_url()
         self.posts.add_post_url_ongoing(post_url)
-        self.assertEqual(self.posts._redis.scard(settings.POSTS_ONGOING), 1)
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_ongoing_name()), 1)
 
         self.posts.move_post_url_reblogged(post_url)
-        self.assertEqual(self.posts._redis.scard(settings.POSTS_ONGOING), 0)
-        self.assertEqual(self.posts._redis.scard(settings.POSTS_REBLOGGED), 1)
-        self.assertEqual(self.posts._redis.spop(settings.POSTS_REBLOGGED), post_url)        
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_ongoing_name()), 0)
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_reblogged_name()), 1)
+        self.assertEqual(self.posts._redis.spop(self.posts.posts_reblogged_name()), post_url)        
 
     def test_add_list_posts_urls_toreblog(self):
         list_posts = list_posts_urls()
 
         self.posts.add_list_posts_urls_toreblog(list_posts)
-        self.assertEqual(self.posts._redis.scard(settings.POSTS_TOREBLOG), len(list_posts))
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_toreblog_name()), len(list_posts))
 
     def test_is_post_toreblog(self):
         post_url = get_post_url()
@@ -74,7 +74,7 @@ class TestPostsRedis(unittest.TestCase):
 
     def test_state_post(self):
         post_url = get_post_url()
-        self.assertEqual(self.posts.state_post(post_url), PostsRedis.STATE_UNKWNOWN)
+        self.assertEqual(self.posts.state_post(post_url), PostsRedis.STATE_NONE)
         self.posts.add_post_url_toreblog(post_url)
         self.assertEqual(self.posts.state_post(post_url), PostsRedis.STATE_TOREBLOG)
         self.posts.remove_post_url_toreblog(post_url)
@@ -82,6 +82,30 @@ class TestPostsRedis(unittest.TestCase):
         self.assertEqual(self.posts.state_post(post_url), PostsRedis.STATE_ONGOING)
         self.posts.move_post_url_reblogged(post_url)
         self.assertEqual(self.posts.state_post(post_url), PostsRedis.STATE_REBLOGGED)
+
+    def test_add_post_already_ongoing(self):
+        post_url = get_post_url()
+        self.posts.add_post_url_ongoing(post_url)
+
+        self.assertEqual(self.posts.add_post_url_toreblog(post_url), 0)
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_toreblog_name()), 0)
+
+    def test_add_post_already_reblogged(self):
+        post_url = get_post_url()
+        self.posts.add_post_url_ongoing(post_url)
+        self.posts.move_post_url_reblogged(post_url)
+
+        self.assertEqual(self.posts.add_post_url_toreblog(post_url), 0)
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_toreblog_name()), 0)
+
+    def test_add_post_already_failed(self):
+        post_url = get_post_url()
+        self.posts.add_post_url_ongoing(post_url)
+        self.posts.move_post_url_failed(post_url)
+
+        self.assertEqual(self.posts.add_post_url_toreblog(post_url), 0)
+        self.assertEqual(self.posts._redis.scard(self.posts.posts_toreblog_name()), 0)
+
 
 if __name__ == '__main__':
     unittest.main()

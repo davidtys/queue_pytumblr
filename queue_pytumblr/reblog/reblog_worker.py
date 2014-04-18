@@ -3,24 +3,19 @@ import time
 
 from queue_pytumblr import settings
 from queue_pytumblr import PostsRedis
+from queue_pytumblr import ReblogTumblr
 
-class ReblogWorker:
-
-    RESULT_REBLOGGED = "reblogged"
-    RESULT_FAILED = "failed"
+class ReblogWorker(ReblogTumblr):
 
     @classmethod
-    def reblog(cls, post_url):
-        post = cls(post_url)
+    def reblog(cls, tumblr_name, post_url):
+        post = cls(tumblr_name, post_url)
         return post.reblog_post()
         
-    def __init__(self, post_url): 
+    def __init__(self, tumblr_name, post_url): 
         self._init_tumblr()
+        self.tumblr_name = tumblr_name
         self.post_url = post_url        
-
-    def _init_tumblr(self):
-        # @todo
-        pass
 
     def reblog_post(self):
         self._rand_sleep()
@@ -33,12 +28,10 @@ class ReblogWorker:
             settings.SLEEP_MAX_MINUTES*60)
         time.sleep(secondes)
 
-    def _tumblr_reblog(self):
-        # @todo
-        # @todo state = queue        
-        return self.RESULT_REBLOGGED
-
     def _record_post(self, result):
-        posts = PostsRedis()
-        posts.move_post_url_reblogged(self.post_url)
+        posts = PostsRedis(self.tumblr_name)
+        if result == self.RESULT_REBLOGGED:
+            posts.move_post_url_reblogged(self.post_url)
+        else:
+            posts.move_post_url_reblogged(self.post_url)
         # @todo : if failed

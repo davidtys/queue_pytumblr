@@ -4,28 +4,41 @@ from queue_pytumblr import PostsRedis
 class PrintPosts(PostsRedis):
 
     @classmethod
-    def infos(cls):
-        posts = cls()
+    def infos_all(cls):
+        for tumblr_name in cls.tumblrs():
+            posts = cls(tumblr_name)
+            posts.print_all()
+            print('')
+
+    @classmethod
+    def tumblrs(cls):
+        posts = cls('')
+        return posts.tumblrs_names()
+
+    @classmethod
+    def infos(cls, tumblr_name):
+        posts = cls(tumblr_name)
         posts.print_all()
 
     @classmethod
-    def toreblog(cls):
-        posts = cls()
+    def toreblog(cls, tumblr_name):
+        posts = cls(tumblr_name)
         posts.print_posts_toreblog()     
 
     @classmethod
-    def ongoing(cls):
-        posts = cls()
+    def ongoing(cls, tumblr_name):
+        posts = cls(tumblr_name)
         posts.print_posts_ongoing()   
 
     @classmethod
-    def reblogged(cls):
-        posts = cls()
+    def reblogged(cls, tumblr_name):
+        posts = cls(tumblr_name)
         posts.print_posts_reblogged()                      
 
 
     def print_all(self):
         print("***")
+        print self.tumblr_name
         self.print_toreblog()
         self.print_ongoing()
         self.print_reblogged()

@@ -3,20 +3,23 @@ import fakeredis
 from queue_pytumblr import settings
 from queue_pytumblr import PostsRedis
 
+def tumblr_name():
+    return "test"
 
 def create_redis(db=0):
     return fakeredis.FakeStrictRedis(db=db)
 
 def create_postsredis(db=0):
-    posts = PostsRedis()
+    posts = PostsRedis(tumblr_name())
     posts._redis = create_redis(db)
     init_postsredis(posts)
     return posts
 
 def init_postsredis(posts):
-    posts._redis.delete(settings.POSTS_TOREBLOG)
-    posts._redis.delete(settings.POSTS_ONGOING)
-    posts._redis.delete(settings.POSTS_REBLOGGED)
+    posts._redis.delete(posts.posts_toreblog_name())
+    posts._redis.delete(posts.posts_ongoing_name())
+    posts._redis.delete(posts.posts_reblogged_name())
+    posts._redis.delete(posts.posts_failed_name())
 
 
 def get_post_url():

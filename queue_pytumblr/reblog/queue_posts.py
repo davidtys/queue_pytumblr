@@ -9,12 +9,22 @@ from queue_pytumblr import ReblogWorker
 class QueuePosts:
 
     @classmethod
-    def reblog(cls):
-        queue_posts = cls()
-        queue_posts.reblog_posts()
+    def add_reblog(cls, tumblr_name, post_url):
+        PostsRedis.add_post(tumblr_name, post_url)
+        return cls.reblog(tumblr_name)
 
-    def __init__(self):
-        self._posts = PostsRedis()
+    @classmethod
+    def reblog(cls, tumblr_name):
+        queue_posts = cls(tumblr_name)
+        return queue_posts.reblog_posts()
+
+    @classmethod
+    def queue_name(cls, tumblr_name):
+        return tumblr_name 
+
+    def __init__(self, tumblr_name):
+        self.tumblr_name = tumblr_name
+        self._posts = PostsRedis(tumblr_name)
         self._init_queue()
 
     # @todo status
@@ -25,7 +35,7 @@ class QueuePosts:
             post_url = self._posts.getdel_post_url_to_reblog()
             self._posts.add_post_url_ongoing(post_url)
             self.queue_worker_post(post_url)
-            print post_url,
+            print "[{}, {}]".format(self.queue_name(self.tumblr_name), post_url), 
         return count
 
     def _ongoing_posts_urls_toreblog(self):
@@ -35,8 +45,8 @@ class QueuePosts:
     def queue_worker_post(self, post_url):        
         self.queue.enqueue_call(
             func=ReblogWorker.reblog,
-            args=(post_url,))
+            args=(self.tumblr_name, post_url,))
 
     def _init_queue(self):        
-        self.queue = Queue(settings.QUEUE_NAME, 
+        self.queue = Queue(self.queue_name(self.tumblr_name), 
             default_timeout=settings.QUEUE_TIMEOUT_MINUTES * 60, connection=Redis())
