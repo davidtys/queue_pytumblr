@@ -33,8 +33,7 @@ class PrintPosts(PostsRedis):
     @classmethod
     def reblogged(cls, tumblr_name):
         posts = cls(tumblr_name)
-        posts.print_posts_reblogged()                      
-
+        posts.print_posts_reblogged()
 
     def print_all(self):
         print("***")

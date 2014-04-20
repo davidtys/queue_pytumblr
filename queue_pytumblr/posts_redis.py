@@ -12,6 +12,12 @@ class PostsRedis:
     STATE_REBLOGGED = "reblogged"
     STATE_FAILED = "failed"
 
+    OAUTH_KEY = 'oauth'
+    CONSUMER_KEY = 'cons_key'
+    CONSUMER_SECRET = 'cons_secret'
+    OAUTH_TOKEN = 'oauth_token'
+    OAUTH_SECRET = 'oauth_secret'
+
     @classmethod
     def add_post(cls, tumblr_name, post_url):
         posts = cls(tumblr_name)
@@ -21,6 +27,11 @@ class PostsRedis:
     def add_list_posts(cls, tumblr_name, posts_urls, separator=" "):
         posts = cls(tumblr_name)
         return posts.add_list_posts_urls_toreblog(posts_urls.split(separator))
+
+    @classmethod
+    def init_oauth(cls, tumblr_name, consumer_key, consumer_secret, oauth_token, oauth_secret):
+        posts = cls(tumblr_name)
+        posts.set_oauth(consumer_key, consumer_secret, oauth_token, oauth_secret)
 
     def __init__(self, tumblr_name):        
         self.tumblr_name = tumblr_name
@@ -47,6 +58,33 @@ class PostsRedis:
 
     def _add_tumblr_name(self):
         return self._redis.sadd(settings.TUMBLRS_NAMES, self.tumblr_name)
+
+    # --- oauth ---
+
+    def get_oauth_tumblr_name(self):
+        return self.tumblr_name + ':' + self.OAUTH_KEY
+
+    def set_oauth(self, consumer_key, consumer_secret, oauth_token, oauth_secret):
+        self._redis.hset(self.get_oauth_tumblr_name(), self.CONSUMER_KEY, consumer_key)
+        self._redis.hset(self.get_oauth_tumblr_name(), self.CONSUMER_SECRET, consumer_secret)
+        self._redis.hset(self.get_oauth_tumblr_name(), self.OAUTH_TOKEN, oauth_token)
+        self._redis.hset(self.get_oauth_tumblr_name(), self.OAUTH_SECRET, oauth_secret)
+
+    def get_consumer_key(self):
+        return self._redis.hget(self.get_oauth_tumblr_name(), self.CONSUMER_KEY)
+
+    def get_consumer_secret(self):
+        return self._redis.hget(self.get_oauth_tumblr_name(), self.CONSUMER_SECRET)
+
+    def get_oauth_token(self):
+        return self._redis.hget(self.get_oauth_tumblr_name(), self.OAUTH_TOKEN)
+
+    def get_oauth_secret(self):
+        return self._redis.hget(self.get_oauth_tumblr_name(), self.OAUTH_SECRET)
+
+    def check_oauth(self):
+        if not self._redis.exists(self.get_oauth_tumblr_name()):
+            raise Exception("oauth doesn't exist for '" + self.get_oauth_tumblr_name() +"'")
 
     # --- to reblog ---
 

@@ -3,9 +3,10 @@ import time
 
 from queue_pytumblr import settings
 from queue_pytumblr import PostsRedis
-from queue_pytumblr import ReblogTumblr
+from queue_pytumblr import TumblrReblog
 
-class ReblogWorker(ReblogTumblr):
+
+class ReblogWorker:
 
     @classmethod
     def reblog(cls, tumblr_name, post_url):
@@ -13,25 +14,34 @@ class ReblogWorker(ReblogTumblr):
         return post.reblog_post()
         
     def __init__(self, tumblr_name, post_url): 
-        self._init_tumblr()
         self.tumblr_name = tumblr_name
         self.post_url = post_url        
 
     def reblog_post(self):
-        self._rand_sleep()
-        result = self._tumblr_reblog()
-        self._record_post(result)
-        return self.post_url #@todo return id post
-     
+        #self._rand_sleep()
+        self._init_reblog()
+        id = self._tumblr.reblog_post_url()
+        self._record_post(id)
+        return id
+
+    def _init_reblog(self):
+        self._init_posts_redis()
+        self._tumblr = TumblrReblog(self.tumblr_name, self.post_url,
+            self._posts.get_consumer_key(), self._posts.get_consumer_secret(), 
+            self._posts.get_oauth_token(), self._posts.get_oauth_secret())
+
+    def _init_posts_redis(self):
+        self._posts = PostsRedis(self.tumblr_name)
+        self._posts.check_oauth()
+
     def _rand_sleep(self):
         secondes = random.randrange(settings.SLEEP_MIN_MINUTES*60,
             settings.SLEEP_MAX_MINUTES*60)
         time.sleep(secondes)
 
-    def _record_post(self, result):
-        posts = PostsRedis(self.tumblr_name)
-        if result == self.RESULT_REBLOGGED:
-            posts.move_post_url_reblogged(self.post_url)
+    def _record_post(self, id):        
+        if not id:
+            #posts.move_post_url_failed(self.post_url)
+            pass
         else:
-            posts.move_post_url_reblogged(self.post_url)
-        # @todo : if failed
+            self._posts.move_post_url_reblogged(self.post_url)

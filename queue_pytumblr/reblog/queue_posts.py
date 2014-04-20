@@ -24,7 +24,7 @@ class QueuePosts:
 
     def __init__(self, tumblr_name):
         self.tumblr_name = tumblr_name
-        self._posts = PostsRedis(tumblr_name)
+        self._init_posts_redis()
         self._init_queue()
 
     # @todo status
@@ -46,6 +46,10 @@ class QueuePosts:
         self.queue.enqueue_call(
             func=ReblogWorker.reblog,
             args=(self.tumblr_name, post_url,))
+
+    def _init_posts_redis(self):
+        self._posts = PostsRedis(self.tumblr_name)
+        self._posts.check_oauth()
 
     def _init_queue(self):        
         self.queue = Queue(self.queue_name(self.tumblr_name), 

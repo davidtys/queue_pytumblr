@@ -19,4 +19,4 @@ SLEEP_MIN_MINUTES = 1 # sleep before reblog
 SLEEP_MAX_MINUTES = 3
 
 # tumblr
-REBLOG_STATE = "queue"
+#REBLOG_STATE = "queue"
