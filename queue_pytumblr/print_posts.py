@@ -35,12 +35,19 @@ class PrintPosts(PostsRedis):
         posts = cls(tumblr_name)
         posts.print_posts_reblogged()
 
+    @classmethod
+    def failed(cls, tumblr_name):
+        posts = cls(tumblr_name)
+        posts.print_posts_failed()        
+
+
     def print_all(self):
         print("***")
         print self.tumblr_name
         self.print_toreblog()
         self.print_ongoing()
         self.print_reblogged()
+        self.print_failed()
         print("***")  
 
     def print_toreblog(self):
@@ -52,6 +59,9 @@ class PrintPosts(PostsRedis):
     def print_reblogged(self):
         print("{} posts reblogged").format(self.count_posts_reblogged())
 
+    def print_failed(self):
+        print("{} posts failed").format(self.count_posts_failed())
+
     def print_posts_toreblog(self):
         self.print_list_posts_urls(self.posts_urls_toreblog(), "to reblog")
 
@@ -60,6 +70,9 @@ class PrintPosts(PostsRedis):
 
     def print_posts_reblogged(self):
         self.print_list_posts_urls(self.posts_urls_reblogged(), "reblogged")  
+
+    def print_posts_failed(self):
+        self.print_list_posts_urls(self.posts_urls_failed(), "failed")  
 
     def print_list_posts_urls(self, posts_urls, name):
         print("{} posts {}").format(len(posts_urls), name)

@@ -11,12 +11,12 @@ POSTS_REBLOGGED = "reblogged"
 POSTS_FAILED = "failed"
 
 # queue
-QUEUE_TIMEOUT_MINUTES = 30 # max minutes to reblog before the worker is failed
-MAX_TOREBLOG = 2
+QUEUE_TIMEOUT_MINUTES = 15 # max minutes to reblog before the worker is failed
+MAX_TOREBLOG = 10
 
 # worker
 SLEEP_MIN_MINUTES = 1 # sleep before reblog
-SLEEP_MAX_MINUTES = 3
+SLEEP_MAX_MINUTES = 5
 
 # tumblr
 #REBLOG_STATE = "queue"

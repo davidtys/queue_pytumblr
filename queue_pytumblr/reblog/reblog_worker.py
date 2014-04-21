@@ -13,12 +13,14 @@ class ReblogWorker:
         post = cls(tumblr_name, post_url)
         return post.reblog_post()
         
-    def __init__(self, tumblr_name, post_url): 
+    def __init__(self, tumblr_name, post_url, sleep_before=True): 
         self.tumblr_name = tumblr_name
-        self.post_url = post_url        
+        self.post_url = post_url
+        self.sleep_before = sleep_before
 
     def reblog_post(self):
-        #self._rand_sleep()
+        if self.sleep_before:
+            self._rand_sleep()
         self._init_reblog()
         id = self._tumblr.reblog_post_url()
         self._record_post(id)
@@ -41,7 +43,7 @@ class ReblogWorker:
 
     def _record_post(self, id):        
         if not id:
-            #posts.move_post_url_failed(self.post_url)
+            self._posts.move_post_url_failed(self.post_url)
             pass
         else:
             self._posts.move_post_url_reblogged(self.post_url)

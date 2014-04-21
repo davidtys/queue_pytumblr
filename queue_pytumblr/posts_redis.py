@@ -169,7 +169,7 @@ class PostsRedis:
         return self._redis.smembers(self.posts_failed_name())
 
     def count_posts_failed(self):
-        return len(self.move_post_url_failed())
+        return len(self.posts_urls_failed())
 
     def is_post_failed(self, post_url):
         if self._redis.sismember(self.posts_failed_name(), post_url) == 1:
