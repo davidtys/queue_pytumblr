@@ -31,7 +31,7 @@ Please follow the instructions in pytumblr (a good way is using  interactive-con
 When you have the oauth tokens, record them for your tumblr with
 
 ```
-PostsRedis.init_oauth(tumblr_name, consumer_key, consumer_secret, oauth_token, oauth_secret
+PostsRedis.init_oauth(tumblr_name, consumer_key, consumer_secret, oauth_token, oauth_secret)
 ```
 
 (you can config different oauths for different tumblrs)
@@ -43,9 +43,9 @@ Please note the worker sleeps a random time (see settings.py) before begin reblo
 
 Please note by default the redis database is '2' (see settings.py)
 
-The posts and oauth are recorded in redis by the tumblr name, so you can manage different tumblrs in the same time.
+The posts and oauth are recorded in redis by the tumblr name, so you can manage different tumblrs.
 
-In redis, post urls are moving from *toreblog* to *ongoing* (worker), to *reblogged* or *failed*
+In redis, post urls are moving from *toreblog* to *ongoing* (worker), and then to *reblogged* or *failed*
 
 
 ## Copyright
