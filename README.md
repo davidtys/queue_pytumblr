@@ -24,7 +24,7 @@ PrintPosts.infos(tumblr_name)
 
 You need [pytumblr](https://github.com/tumblr/pytumblr) and [rq](http://python-rq.org/)
 
-** You need to setup oauth **
+**You need to setup oauth**
 
 Please follow the instructions in pytumblr (a good way is using  interactive-console.py)
 
