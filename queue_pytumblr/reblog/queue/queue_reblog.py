@@ -10,14 +10,14 @@ from queue_pytumblr import QueueTumblr
 class QueueReblog(QueueTumblr):
 
     @classmethod
-    def add_reblog(cls, tumblr_name, post_url):
+    def add_queue(cls, tumblr_name, post_url):
         RedisReblog.add_post(tumblr_name, post_url)
-        count = cls.reblog(tumblr_name)
+        count = cls.queue(tumblr_name)
         if count == 0:
             print "error : the post was not added to the queue (perhaps it was already on going, or reblogged/failed)"
 
     @classmethod
-    def reblog(cls, tumblr_name):
+    def queue(cls, tumblr_name):
         queue_posts = cls(tumblr_name)
         return queue_posts.do_queue()
 

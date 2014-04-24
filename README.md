@@ -7,7 +7,7 @@ Asynchronous reblog a list of Tumblr posts, with RQ and Redis
 
 add a post about kubrick to the reblog list of the tumblr ilovekubrick.tumblr.com, and create a worker for it :
 ```
-QueueReblog.add_reblog("ilovekubrick", "http://kubricksfilms.tumblr.com/post/80674960029/space-station-v-from-2001-a-space-odyssey")
+QueueReblog.add_queue("ilovekubrick", "http://kubricksfilms.tumblr.com/post/80674960029/space-station-v-from-2001-a-space-odyssey")
 ```
 
 run a worker to reblog the posts in the queue :
