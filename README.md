@@ -7,7 +7,7 @@ Asynchronous reblog a list of Tumblr posts, with RQ and Redis
 
 add a post to the reblog list of the tumblr, and create a worker for it :
 ```
-QueuePosts.add_reblog(tumblr_name, post_url)
+QueueReblog.add_reblog(tumblr_name, post_url)
 ```
 
 run a worker to reblog the posts in the queue :
@@ -15,9 +15,9 @@ run a worker to reblog the posts in the queue :
 rqworker reblog:tumblr_name
 ```
 
-print infos about the posts :
+display infos about the posts :
 ```
-PrintPosts.infos(tumblr_name)
+InfosReblog.infos(tumblr_name)
 ```
 
 ## Config
