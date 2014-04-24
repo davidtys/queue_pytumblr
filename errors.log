@@ -1,4 +1,0 @@
-2014-04-21 00:19:51,842:newnewtest:http://hsaptus.tumblr.com/post/653> no post in infos {u'meta': {u'status': 404, u'msg': u'Not Found'}, u'response': []}
-2014-04-21 00:19:51,842:newnewtest:http://hsaptus.tumblr.com/post/653> no reblog_key in infos_post {}
-2014-04-21 00:21:35,361 ::newnewtest :: http://hsaptus.tumblr.com/post/653 >> no post in infos {u'meta': {u'status': 404, u'msg': u'Not Found'}, u'response': []}
-2014-04-21 00:21:35,361 ::newnewtest :: http://hsaptus.tumblr.com/post/653 >> no reblog_key in infos_post {}
