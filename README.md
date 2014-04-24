@@ -5,19 +5,19 @@ Asynchronous reblog a list of Tumblr posts, with RQ and Redis
 ## Quick Usage
 
 
-add a post to the reblog list of the tumblr, and create a worker for it :
+add a post about kubrick to the reblog list of the tumblr ilovekubrick.tumblr.com, and create a worker for it :
 ```
-QueueReblog.add_reblog(tumblr_name, post_url)
+QueueReblog.add_reblog("ilovekubrick", "http://kubricksfilms.tumblr.com/post/80674960029/space-station-v-from-2001-a-space-odyssey")
 ```
 
 run a worker to reblog the posts in the queue :
 ```
-rqworker reblog:tumblr_name
+rqworker reblog:ilovekubrick
 ```
 
 display infos about the posts :
 ```
-InfosReblog.infos(tumblr_name)
+InfosReblog.infos("ilovekubrick")
 ```
 
 ## Config
@@ -31,7 +31,7 @@ Please follow the instructions in pytumblr (you can use interactive-console.py)
 When you have the oauth tokens, record them for your tumblr with
 
 ```
-PostsRedis.init_oauth(tumblr_name, consumer_key, consumer_secret, oauth_token, oauth_secret)
+PostsRedis.init_oauth("ilovekubrick", consumer_key, consumer_secret, oauth_token, oauth_secret)
 ```
 
 (you can config different oauths for different tumblrs)
