@@ -50,7 +50,7 @@ In redis, post urls are moving from *toreblog* to *ongoing* (worker), and then t
 
 ## To Do
 
-It would be cool to integrate with https://github.com/ui/rq-scheduler to run a periodic worker
+It would be cool to integrate it with https://github.com/ui/rq-scheduler to run a periodic worker
 
 
 ## Copyright

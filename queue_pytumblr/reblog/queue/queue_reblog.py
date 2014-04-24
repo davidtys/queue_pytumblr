@@ -14,7 +14,7 @@ class QueueReblog(QueueTumblr):
         RedisReblog.add_post(tumblr_name, post_url)
         count = cls.reblog(tumblr_name)
         if count == 0:
-            print "error to add the post in the queue (perhaps it was already ongoing, or reblogged/failed)"
+            print "error : the post was not added to the queue (perhaps it was already on going, or reblogged/failed)"
 
     @classmethod
     def reblog(cls, tumblr_name):
