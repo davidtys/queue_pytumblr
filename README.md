@@ -1,6 +1,6 @@
 # Queue PyTumblr #
 
-Asynchronous reblog a list of Tumblr posts with RQ, use Redis to record the tumblrs
+Asynchronous reblog a list of Tumblr posts with RQ. It uses Redis to record the tumblrs
 
 ## Quick Usage
 
